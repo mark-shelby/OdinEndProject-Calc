@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display-container">
+            <div class="previous-operand" id="previousOperationScreen"></div>
+            <div class="current-operand" id="currentOperationScreen">0</div>
+        </div>
+        <div class="buttons-grid">
+            <button class="clear-btn" id="clearBtn">AC</button>
+            <button class="delete-btn" id="deleteBtn">DEL</button>
+            <button class="operator" data-operator="/">/</button>
+            <button class="operator" data-operator="*">*</button>
+            <button class="number" data-number="7">7</button>
+            <button class="number" data-number="8">8</button>
+            <button class="number" data-number="9">9</button>
+            <button class="operator" data-operator="-">-</button>
+            <button class="number" data-number="4">4</button>
+            <button class="number" data-number="5">5</button>
+            <button class="number" data-number="6">6</button>
+            <button class="operator" data-operator="+">+</button>
+            <button class="number" data-number="1">1</button>
+            <button class="number" data-number="2">2</button>
+            <button class="number" data-number="3">3</button>
+            <button class="number" id="pointBtn">.</button>
+            <button class="number" data-number="0">0</button>
+            <button class="equals-btn" id="equalsBtn">=</button>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let firstOperand = '';
+        let secondOperand = '';
+        let currentOperation = null;
+        let shouldResetScreen = false;
+
+        // DOM Elements
+        const currentScreen = document.getElementById('currentOperationScreen');
+        const previousScreen = document.getElementById('previousOperationScreen');
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const operatorButtons = document.querySelectorAll('[data-operator]');
+        const equalsButton = document.getElementById('equalsBtn');
+        const clearButton = document.getElementById('clearBtn');
+        const deleteButton = document.getElementById('deleteBtn');
+        const pointButton = document.getElementById('pointBtn');
+
+        // Basic Math Functions
+        const add = (a, b) => a + b;
+        const subtract = (a, b) => a - b;
+        const multiply = (a, b) => a * b;
+        const divide = (a, b) => a / b;
+
+        // Operate Function
+        function operate(operator, a, b) {
+            a = Number(a);
+            b = Number(b);
+            switch (operator) {
+                case '+': return add(a, b);
+                case '-': return subtract(a, b);
+                case '*': return multiply(a, b);
+                case '/': 
+                    if (b === 0) return null;
+                    return divide(a, b);
+                default: return null;
+            }
+        }
+
+        // Display Logic
+        function appendNumber(number) {
+            if (currentScreen.textContent === '0' || shouldResetScreen) resetScreen();
+            currentScreen.textContent += number;
+        }
+
+        function resetScreen() {
+            currentScreen.textContent = '';
+            shouldResetScreen = false;
+        }
+
+        function clear() {
+            currentScreen.textContent = '0';
+            previousScreen.textContent = '';
+            firstOperand = '';
+            secondOperand = '';
+            currentOperation = null;
+        }
+
+        function appendPoint() {
+            if (shouldResetScreen) resetScreen();
+            if (currentScreen.textContent === '') currentScreen.textContent = '0';
+            if (currentScreen.textContent.includes('.')) return;
+            currentScreen.textContent += '.';
+        }
+
+        function deleteNumber() {
+            if (currentScreen.textContent === 'Snarky error: Cannot divide by 0!') clear();
+            currentScreen.textContent = currentScreen.textContent.toString().slice(0, -1);
+            if (currentScreen.textContent === '') currentScreen.textContent = '0';
+        }
+
+        function setOperation(operator) {
+            // Evaluates consecutive operators with new numbers (e.g., 12 + 7 -)
+            if (currentOperation !== null && !shouldResetScreen) {
+                evaluate();
+            }
+            firstOperand = currentScreen.textContent;
+            currentOperation = operator;
+            previousScreen.textContent = `${firstOperand} ${currentOperation}`;
+            shouldResetScreen = true;
+        }
+
+        function evaluate() {
+            // Prevent evaluation if no operator or if user just pressed an operator
+            if (currentOperation === null || shouldResetScreen) return;
+            
+            secondOperand = currentScreen.textContent;
+            const result = operate(currentOperation, firstOperand, secondOperand);
+            
+            if (result === null && currentOperation === '/') {
+                currentScreen.textContent = 'Snarky error: Cannot divide by 0!';
+            } else {
+                currentScreen.textContent = roundResult(result);
+            }
+            
+            previousScreen.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
+            currentOperation = null;
+            shouldResetScreen = true; // Next number press will clear the result screen
+        }
+
+        function roundResult(number) {
+            return Math.round(number * 100000) / 100000;
+        }
+
+        // Event Listeners
+        numberButtons.forEach((button) =>
+            button.addEventListener('click', () => appendNumber(button.dataset.number))
+        );
+
+        operatorButtons.forEach((button) =>
+            button.addEventListener('click', () => setOperation(button.dataset.operator))
+        );
+
+        equalsButton.addEventListener('click', evaluate);
+        clearButton.addEventListener('click', clear);
+        deleteButton.addEventListener('click', deleteNumber);
+        pointButton.addEventListener('click', appendPoint);
+
+        // Keyboard Support (Extra Credit)
+        window.addEventListener('keydown', handleKeyboardInput);
+
+        function handleKeyboardInput(e) {
+            if (e.key >= 0 && e.key <= 9) appendNumber(e.key);
+            if (e.key === '.') appendPoint();
+            if (e.key === '=' || e.key === 'Enter') evaluate();
+            if (e.key === 'Backspace') deleteNumber();
+            if (e.key === 'Escape') clear();
+            if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+                setOperation(e.key);
+            }
+        }
+    </script>
+</body>
+</html>
