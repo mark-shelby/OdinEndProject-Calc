@@ -1,0 +1,86 @@
+*, *::before, *::after {
+     box-sizing: border-box;
+     }
+        body {
+             font-family: sans-serif;
+             display: flex; 
+             justify-content: center; 
+             align-items: center; 
+             height: 100vh; 
+             margin: 0; 
+             background-color: #f3f4f6;
+             }
+        .calculator {
+             background-color: #1f2937; 
+             padding: 20px; 
+             border-radius: 10px; 
+             width: 320px; 
+             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+             }
+        .display-container {
+             background-color: #d1d5db;
+             padding: 20px; 
+             border-radius: 5px;
+             margin-bottom: 20px; 
+             text-align: right; 
+             /* overflow-wrap: break-word;  */
+             min-height: 80px; 
+             display: flex; 
+             flex-direction: column; 
+             justify-content: space-between; 
+            }
+        .previous-operand {
+             font-size: 1rem; 
+             color: #4b5563; 
+             min-height: 1.2rem; 
+            }
+        .current-operand {
+             font-size: 2rem; 
+             font-weight: bold; 
+             color: #111827; 
+            }
+        .buttons-grid {
+             display: grid; 
+             grid-template-columns: repeat(4, 1fr); 
+             gap: 10px; 
+            }
+        button {
+             padding: 15px; 
+             font-size: 1.2rem; 
+             border: none; 
+             border-radius: 5px; 
+             cursor: pointer; 
+             background-color: #e5e7eb; 
+             transition: background-color 0.1s; 
+            }
+        button:hover {
+             background-color: #d1d5db; 
+            }
+        .operator {
+             background-color: #fcd34d; 
+            }
+        .operator:hover {
+             background-color: #fbbf24; 
+            }
+        .clear-btn {
+             background-color: #ef4444; 
+             color: white; 
+            }
+        .clear-btn:hover {
+             background-color: #dc2626; 
+            }
+        .delete-btn {
+             background-color: #f87171; 
+             color: white; 
+            }
+        .delete-btn:hover {
+             background-color: #ef4444; 
+            }
+        .equals-btn {
+             grid-column: span 2; 
+             background-color: #3b82f6; 
+             color: white; 
+            }
+        .equals-btn:hover {
+             background-color: #2563eb; 
+            }
